@@ -7,15 +7,15 @@ import scipy.io.wavfile as wav
 import tempfile
 
 from google import genai # Google Gemini
+from elevenlabs.client import ElevenLabs
+from elevenlabs import play
 import pvporcupine # Wake Word Detection
 import sounddevice as sd # Audio Capture
 import whisper # Audio to text transcription
 
 FRAME_LENGTH = 512
 
-def get_gemini_response(prompt, chat_history = None):
-    client = genai.Client(api_key=os.getenv('GEMINI_API_KEY'))
-
+def get_gemini_response(client, prompt, chat_history = None):
     contents = chat_history.copy() if chat_history else []
     contents.append({
         "role": "user",
@@ -33,6 +33,23 @@ def get_gemini_response(prompt, chat_history = None):
             return "Rate limit hit. Please try again later."
         else:
             raise e
+
+def text_to_speech(client, text):
+    try:
+        audio_generator = client.text_to_speech.convert(
+            text = text,
+            voice_id = "YXpFCvM1S3JbWEJhoskW",
+            model_id = "eleven_turbo_v2_5",
+            output_format="pcm_24000"
+        )
+
+        with sd.OutputStream(samplerate = 24000, channels = 1, dtype = 'int16') as stream:
+            for chunk in audio_generator:
+                audio_data = np.frombuffer(chunk, dtype = np.int16)
+                stream.write(audio_data)
+
+    except Exception as e:
+        print(f"Error generating speech: {e}")
 
 def init_porcupine():
     return pvporcupine.create(access_key=os.getenv('PICOVOICE_ACCESS_KEY'), keyword_paths=['./wake_word.ppn'])
@@ -71,7 +88,7 @@ def transcribe_audio(model, audio_data, sample_rate):
         result = model.transcribe(f.name, fp16=False)
         return result['text']
 
-def handle_prompt(text_prompt, chat_history, history_limit = 20):
+def handle_prompt(gemini_client, text_prompt, chat_history, history_limit = 20):
     if not chat_history:
         chat_history.append({
             "role": "user",
@@ -82,7 +99,7 @@ def handle_prompt(text_prompt, chat_history, history_limit = 20):
             "parts": [{"text": "Understood! I'll be a helpful voice assistant and keep my responses concise."}]
         })
 
-    response = get_gemini_response(text_prompt, chat_history)
+    response = get_gemini_response(gemini_client, text_prompt, chat_history)
 
     # Update chat history
     chat_history.append({
@@ -110,6 +127,8 @@ def main():
 
     # Load Whisper model
     whisper_model = whisper.load_model("tiny", device = "cpu") # Options: tiny, base, small, medium, large
+    gemini_client = genai.Client(api_key=os.getenv('GEMINI_API_KEY'))
+    eleven_client = ElevenLabs(api_key=os.getenv('ELEVENLABS_API_KEY'))
 
     # Initialize chat history
     chat_history = []
@@ -141,8 +160,11 @@ def main():
                         continue
 
                     print(f"You said: {text_prompt} \n")
-                    response = handle_prompt(text_prompt, chat_history)
+                    response = handle_prompt(gemini_client, text_prompt, chat_history)
                     print(response + "\n")
+
+                    # Speak back
+                    text_to_speech(eleven_client, response)
 
     finally:
         porcupine.delete()
