@@ -1,11 +1,11 @@
 import numpy as np
 import sounddevice as sd
+from elevenlabs.client import ElevenLabs
 
 from gerald import TextToSpeech
 
 class ElevenLabsTTS(TextToSpeech):
     def __init__(self, api_key: str, voice_id: str, model_id: str = "eleven_turbo_v2_5"):
-        from elevenlabs.client import ElevenLabs
         self.client = ElevenLabs(api_key=api_key)
         self.voice_id = voice_id
         self.model_id = model_id

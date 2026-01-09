@@ -1,10 +1,10 @@
 import numpy as np
+import pvporcupine
 
 from gerald import WakeWordDetector
 
 class PorcupineWakeWord(WakeWordDetector):
     def __init__(self, access_key: str, keyword_paths: list):
-        import pvporcupine
         self._porcupine = pvporcupine.create(
             access_key=access_key,
             keyword_paths=keyword_paths

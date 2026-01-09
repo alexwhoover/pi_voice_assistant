@@ -1,10 +1,11 @@
-from .stt import WhisperSTT
+from .stt import WhisperSTT, ElevenLabsSTT
 from .tts import ElevenLabsTTS
 from .llm import GeminiLLM
 from .wake_word import PorcupineWakeWord
 
 __all__ = [
     'WhisperSTT',
+    'ElevenLabsSTT',
     'ElevenLabsTTS',
     'GeminiLLM',
     'PorcupineWakeWord'

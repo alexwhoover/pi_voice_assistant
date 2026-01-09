@@ -1,8 +1,10 @@
 from gerald import LLM
+from google import genai
+from google.genai import types
+from datetime import datetime
 
 class GeminiLLM(LLM):
-    def __init__(self, api_key: str, model: str = "gemini-2.5-flash-lite"):
-        from google import genai
+    def __init__(self, api_key: str, model: str):
         self.client = genai.Client(api_key=api_key)
         self.model = model
 
@@ -13,10 +15,16 @@ class GeminiLLM(LLM):
             "parts": [{"text": prompt}]
         })
 
+        now = datetime.now().strftime("%A, %B %d, %Y at %I:%M %p")
+
         try:
             response = self.client.models.generate_content(
                 model=self.model,
-                contents=contents
+                contents=contents,
+                config=types.GenerateContentConfig(
+                    system_instruction=f"Current time: {now}",
+                    tools=[types.Tool(google_search=types.GoogleSearch())]
+                )
             )
             return response.text
         except Exception as e:

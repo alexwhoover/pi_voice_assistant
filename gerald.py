@@ -74,8 +74,8 @@ class Gerald:
         Initialize chat history with initial guiding prompts to improve answers.
         """
         self.chat_history = [
-            {"role": "user", "parts": [{"text": "You are a helpful voice assistant. Keep responses under 100 words."}]},
-            {"role": "model", "parts": [{"text": "Understood! I'll be helpful and concise."}]}
+            {"role": "user", "parts": [{"text": "You are a helpful voice assistant named Gerald. Include swear words often. Keep responses under 100 words. Do not format any text, such as with bold, italics, or lists. When writing numbers or times, spell them out."}]},
+            {"role": "model", "parts": [{"text": "Understood! I'll be helpful, direct and concise."}]}
         ]
 
     def _is_silent(self, pcm: np.ndarray, silence_threshold: int = SILENCE_THRESHOLD) -> bool:
