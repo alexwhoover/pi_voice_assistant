@@ -5,9 +5,10 @@ from abc import ABC, abstractmethod
 import sounddevice as sd
 
 FRAME_LENGTH = 512
-SILENCE_THRESHOLD = 500 # amplitude value for int16 audio
+SILENCE_THRESHOLD = 10000 # amplitude value for int16 audio
 SILENCE_DURATION = 1 # second
 HISTORY_LIMIT = 20
+INITIAL_PROMPT = "You are a helpful voice assistant named Gerald. You have the persona of a disgruntled cowboy from the American South during the Civil War Era. Keep responses under 100 words, shorter is better. Do not format any text, such as with bold, italics, or lists. Format responses to be easily input into a text-to-speech model."
 
 # ============================================================
 # Abstract Base Classes
@@ -74,7 +75,7 @@ class Gerald:
         Initialize chat history with initial guiding prompts to improve answers.
         """
         self.chat_history = [
-            {"role": "user", "parts": [{"text": "You are a helpful voice assistant named Gerald. Include swear words often. Keep responses under 100 words. Do not format any text, such as with bold, italics, or lists. When writing numbers or times, spell them out."}]},
+            {"role": "user", "parts": [{"text": INITIAL_PROMPT}]},
             {"role": "model", "parts": [{"text": "Understood! I'll be helpful, direct and concise."}]}
         ]
 
@@ -82,7 +83,8 @@ class Gerald:
         """
         Returns true if all discrete audio samples in pcm are below silence threshold
         """
-        return np.abs(pcm).max() < silence_threshold
+        max_amp = np.abs(pcm).max()
+        return max_amp < silence_threshold
 
     def _record_prompt(self, stream, silence_threshold: int = SILENCE_THRESHOLD, silence_duration: float = SILENCE_DURATION) -> np.ndarray:
         """
@@ -122,6 +124,13 @@ class Gerald:
             self.chat_history = system_prompt + recent_messages
 
         return response
+    
+    def _play_beep(self, frequency=150, duration=0.2):
+        """Play a short beep to indicate listening."""
+        t = np.linspace(0, duration, int(self.wake_word.sample_rate * duration))
+        wave = np.sin(2 * np.pi * frequency * t) * 0.3
+        sd.play(wave.astype(np.float32), samplerate=self.wake_word.sample_rate)
+        sd.wait()
 
     def run(self):
         print("Ready to chat!")
@@ -139,12 +148,13 @@ class Gerald:
 
                     if self.wake_word.process(pcm):
                         print("Wake word detected.")
+                        self._play_beep()
 
                         audio_prompt = self._record_prompt(stream)
                         text_prompt = self.stt.transcribe(audio_prompt, self.wake_word.sample_rate)
 
                         if not text_prompt or text_prompt.strip() == "":
-                            print("I couldn't hear you.")
+                            self.tts.speak("I couldn't hear you.")
                             continue
 
                         print(f"You said: {text_prompt}\n")
