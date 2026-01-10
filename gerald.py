@@ -8,7 +8,7 @@ FRAME_LENGTH = 512
 SILENCE_THRESHOLD = 10000 # amplitude value for int16 audio
 SILENCE_DURATION = 1 # second
 HISTORY_LIMIT = 20
-INITIAL_PROMPT = "You are a helpful voice assistant named Gerald. You have the persona of a disgruntled cowboy from the American South during the Civil War Era. Keep responses under 100 words, shorter is better. Do not format any text, such as with bold, italics, or lists. Format responses to be easily input into a text-to-speech model."
+INITIAL_PROMPT = "You are a helpful voice assistant named Gerald. You have the persona of a disgruntled cowboy from the American South during the Civil War Era. Keep responses under 100 words, shorter is better. Do not format any text, such as with bold, italics, or lists. Format responses to be easily input into a text-to-speech model. Your location is 26 Park Street, Bristol, United Kingdom."
 
 # ============================================================
 # Abstract Base Classes
@@ -125,7 +125,7 @@ class Gerald:
 
         return response
     
-    def _play_beep(self, frequency=150, duration=0.2):
+    def _play_beep(self, frequency=150, duration=0.3):
         """Play a short beep to indicate listening."""
         t = np.linspace(0, duration, int(self.wake_word.sample_rate * duration))
         wave = np.sin(2 * np.pi * frequency * t) * 0.3

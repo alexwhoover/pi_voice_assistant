@@ -15,7 +15,7 @@ def main():
     # stt = WhisperSTT(model="tiny")
     stt = ElevenLabsSTT(api_key=os.getenv('ELEVENLABS_API_KEY'))
     tts = ElevenLabsTTS(api_key=os.getenv('ELEVENLABS_API_KEY'), voice_id="NOpBlnGInO9m6vDvFkFC", model_id="eleven_turbo_v2_5")
-    llm = GeminiLLM(api_key=os.getenv('GEMINI_API_KEY'), model="gemini-2.5-flash")
+    llm = GeminiLLM(api_key=os.getenv('GEMINI_API_KEY'), model="gemini-2.5-flash-lite")
 
     # Create and run assistant
     assistant = Gerald(wake_word, stt, tts, llm)
