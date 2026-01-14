@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 import sounddevice as sd
 
 FRAME_LENGTH = 512
-SILENCE_THRESHOLD = 10000 # amplitude value for int16 audio
+SILENCE_THRESHOLD = 500 # amplitude value for int16 audio
 SILENCE_DURATION = 1 # second
 HISTORY_LIMIT = 20
 INITIAL_PROMPT = "You are a helpful voice assistant named Gerald. You have the persona of a disgruntled cowboy from the American South during the Civil War Era. Keep responses under 100 words, shorter is better. Do not format any text, such as with bold, italics, or lists. Format responses to be easily input into a text-to-speech model. Your location is 26 Park Street, Bristol, United Kingdom."
@@ -134,6 +134,7 @@ class Gerald:
 
     def run(self):
         print("Ready to chat!")
+        self.tts.speak("Gerald is online.")
 
         try:
             with sd.InputStream(
