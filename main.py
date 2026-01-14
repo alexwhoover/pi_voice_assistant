@@ -3,17 +3,14 @@ from dotenv import load_dotenv
 
 from src.gerald import Gerald
 from src.providers.wake_word import PorcupineWakeWord
-from src.providers.stt import WhisperSTT, ElevenLabsSTT
+from src.providers.stt import ElevenLabsSTT
 from src.providers.tts import ElevenLabsTTS
 from src.providers.llm import GeminiLLM
 
 from src.config import (
     WAKE_WORD_KEYWORD_PATHS,
-    WHISPER_MODEL,
-    WHISPER_DEVICE,
     ELEVENLABS_VOICE_ID,
     ELEVENLABS_TTS_MODEL,
-    ELEVENLABS_STT_MODEL,
     GEMINI_MODEL
 )
 
