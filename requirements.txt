@@ -1,0 +1,20 @@
+# Core dependencies
+numpy>=1.24.0
+python-dotenv>=1.0.0
+
+# Audio processing
+sounddevice>=0.4.6
+scipy>=1.10.0
+
+# Wake word detection
+pvporcupine>=3.0.0
+
+# Speech-to-text
+openai-whisper>=20230918
+elevenlabs>=1.0.0
+
+# Text-to-speech
+# elevenlabs (already included above)
+
+# LLM
+google-genai>=0.1.0
