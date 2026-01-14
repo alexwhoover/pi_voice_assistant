@@ -5,7 +5,8 @@ import tempfile
 from elevenlabs.client import ElevenLabs
 import whisper
 
-from gerald import SpeechToText
+from src.interfaces import SpeechToText
+from src.config import ELEVENLABS_STT_MODEL, ELEVENLABS_STT_LANGUAGE
 
 class WhisperSTT(SpeechToText):
     def __init__(self, model: str = "tiny", device: str = "cpu"):
@@ -37,8 +38,8 @@ class ElevenLabsSTT(SpeechToText):
         try:
             transcription = self.client.speech_to_text.convert(
                 file=buffer,
-                model_id="scribe_v2",
-                language_code="eng"
+                model_id=ELEVENLABS_STT_MODEL,
+                language_code=ELEVENLABS_STT_LANGUAGE
             )
             return transcription.text
         except Exception as e:
