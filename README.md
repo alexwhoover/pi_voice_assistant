@@ -103,7 +103,7 @@ Key settings can be adjusted in `src/config.py`. Of particular importance is the
 ## Reflection
 
 ### Project Goal
-To create a voice assistant where all the components are completely modular. This way if, for example, a new LLM model becomes more popular, it is easy to swap it in. I accomplished this using abstract classes:
+To create a voice assistant where all the components are completely modular. This way, models can be swapped as desired. I accomplished this using abstract classes:
 
 ```Python
 class SpeechToText(ABC):
@@ -124,12 +124,12 @@ class LLM(ABC):
 
 class WakeWordDetector(ABC):
     @abstractmethod
-    def process(self, audio_data: np.ndarray) -> bool:
+    def process(self, audio_data):
         pass
     ...
 ```
 
-To change to a new provider, simply implement the relevent abstract class and swap it out in main.py.
+To change to a new provider, simply implement the relevent abstract class and replace the corresponding object in main.py.
 
 ### Areas for Improvement
 1. I would like to test performance on a fully offline implementation using tools like Vost, Whisper, and Ollama. Though, I suspect this would increase the lag between speaking and answering.
