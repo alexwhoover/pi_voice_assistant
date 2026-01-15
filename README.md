@@ -6,7 +6,10 @@ speech-to-text, LLM processing, and text-to-speech to provide a conversational A
 To begin conversing, simply say **Hey Gerald.**
 
 ## Demo
-To be added later.
+![pi-voice-assistant-image](https://github.com/user-attachments/assets/00090477-58e7-4cf2-8d6a-b7e83ccb0ceb)
+
+https://github.com/user-attachments/assets/5329a0f2-33f6-489a-a46e-006756866f6c
+
 
 ## Installation and Setup Instructions
 
